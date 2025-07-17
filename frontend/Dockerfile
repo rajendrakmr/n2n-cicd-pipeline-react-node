@@ -23,7 +23,7 @@ RUN  npm  run build --production
 ############################
 # Stage : 2 for multi stage
 #########################
-FROM nginx:alpine AS deployer
+FROM nginx:stable-alpine AS deployer
 
 # delete all file if exist
 RUN rm -rf /usr/share/nginx/html/*
