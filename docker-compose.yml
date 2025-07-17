@@ -1,4 +1,3 @@
-version: "3.9"  # optional, but recommended
 services:
   mysql:
     container_name: mysql

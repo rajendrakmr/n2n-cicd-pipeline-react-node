@@ -21,6 +21,9 @@ COPY . ./
 #########################
 FROM node:20-alpine AS deployer
 
+# ✅ Install curl for healthcheck
+RUN apk add --no-cache curl
+
 # make directory separted
 WORKDIR /app
 
