@@ -11,7 +11,6 @@ else
   echo "✅ backend/.env already exists."
 fi
  
-
  # Step 0: Check backend .env
 if [ ! -f ./frontend/.env ]; then
   echo "📄 backend/.env not found. Creating from backend/.env.example..."
@@ -19,6 +18,7 @@ if [ ! -f ./frontend/.env ]; then
 else
   echo "✅ frontend/.env already exists."
 fi
+
 # Step 1: Get IMDSv2 token
 TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
   -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
