@@ -13,11 +13,11 @@ fi
  
 
  # Step 0: Check backend .env
-if [ ! -f ./fronted/.env ]; then
+if [ ! -f ./frontend/.env ]; then
   echo "📄 backend/.env not found. Creating from backend/.env.example..."
-  cp ./fronted/.env.example ./fronted/.env
+  cp ./frontend/.env.example ./frontend/.env
 else
-  echo "✅ fronted/.env already exists."
+  echo "✅ frontend/.env already exists."
 fi
 # Step 1: Get IMDSv2 token
 TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
