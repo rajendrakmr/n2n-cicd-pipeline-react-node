@@ -36,6 +36,11 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: MYSQL_DATABASE
           ports:
             - containerPort: 3306
           volumeMounts:
