@@ -57,7 +57,7 @@ spec:
       volumes:
         - name: schema
           hostPath:
-            path: /init-db  # Replace with your actual host path
+            path: /home/ubuntu/n2n-cicd-pipeline-react-node/k8s/init-db  # Replace with your actual host path
             type: Directory
   volumeClaimTemplates:
     - metadata:
