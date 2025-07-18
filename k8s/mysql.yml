@@ -21,20 +21,12 @@ spec:
           args:
             - |
               echo "Waiting for MySQL to be ready..."
-              until mysqladmin ping -h mysql-0.mysql-svc.ecommerce-ns.svc.cluster.local -uroot -p$MYSQL_ROOT_PASSWORD --silent; do
+              retries=30
+              until mysqladmin ping -h mysql-0.mysql-svc.ecommerce-ns.svc.cluster.local -uroot -p$MYSQL_ROOT_PASSWORD --silent || [ $retries -eq 0 ]; do
+                echo "Waiting... ($retries left)"
+                retries=$((retries - 1))
                 sleep 2
-              done
-              echo "Running schema from /init-db/init.sql..."
-              mysql -h mysql-0.mysql-svc.ecommerce-ns.svc.cluster.local -uroot -p$MYSQL_ROOT_PASSWORD < /init-db/init.sql
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: ecommerce-secret
-                  key: MYSQL_ROOT_PASSWORD
-          volumeMounts:
-            - name: schema
-              mountPath: /init-db
+              done  
       containers:
         - name: mysql
           image: mysql:8.0
@@ -54,11 +46,12 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d 
       volumes:
-        - name: schema
-          hostPath:
-            path: /home/ubuntu/n2n-cicd-pipeline-react-node/k8s/init-db  # Replace with your actual host path
-            type: Directory
+        - name: initdb
+          configMap:
+            name: mysql-initdb-config
   volumeClaimTemplates:
     - metadata:
         name: mysql-data

@@ -5,7 +5,8 @@ USE ecommerce_db;
 CREATE TABLE products (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL
+  price DECIMAL(10, 2) NOT NULL,
+  image_url VARCHAR(255)
 );
 
 ALTER TABLE products ADD COLUMN image_url VARCHAR(255);
