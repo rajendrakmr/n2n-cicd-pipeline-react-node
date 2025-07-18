@@ -1,0 +1,69 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: TEST@1998
+      MYSQL_DATABASE: ecommerce_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - ecommerce
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  backend:
+    container_name: nodebackend
+    build:
+      context: ./backend
+    environment:
+        NODE_ENV: production
+        PORT: 5000
+        DB_HOST: mysql
+        DB_USER: root
+        DB_PASSWORD: TEST@1998  # ✅ must match process.env.DB_PASSWORD
+        DB_NAME: ecommerce_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    ports:
+      - "5000:5000"
+    networks:
+      - ecommerce
+
+  frontend:
+    container_name: reactfrontend
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy 
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ecommerce
+
+volumes:
+  mysql-data:
+
+networks:
+  ecommerce:
