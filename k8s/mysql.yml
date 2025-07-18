@@ -4,43 +4,37 @@ metadata:
   name: mysql
   namespace: ecommerce-ns
 spec:
+  serviceName: mysql-svc
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
-  serviceName: mysql-svc
-  replicas: 1
   template:
     metadata:
       labels:
         app: mysql
     spec:
-      initContainers:
-        - name: init-mysql
+      containers:
+        - name: mysql
           image: mysql:latest
-          command: ['sh', '-c', "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD < /docker-entrypoint-initdb.d/init.sql"]
+          ports:
+            - containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: MYSQL_ROOT_PASSWORD
-          volumeMounts:
-            - name: initdb
-              mountPath: /docker-entrypoint-initdb.d
-      containers:
-        - name: mysql
-          image: mysql:latest
-          env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: ecommerce-secret
-                  key: MYSQL_ROOT_PASSWORD
-          ports:
-            - containerPort: 3306
+                  name: ecommerce-config
+                  key: MYSQL_DATABASE
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: initdb
           configMap:
