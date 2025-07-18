@@ -8,4 +8,5 @@ data:
   DB_HOST: mysql.ecommerce-ns.svc.cluster.local 
   NODE_ENV: production
   DB_USER: root 
+  DB_NAME: ecommerce_db
   PORT: "5000"
